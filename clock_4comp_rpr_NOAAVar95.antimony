@@ -1,0 +1,91 @@
+
+function hbt(sigma, sum_omega)
+  1/(1 + exp(-sigma*sum_omega));
+end
+
+// Compartments and Species:
+species C1, C2, C3, C4, E, D, F, RPS6p;
+
+// Reactions:
+Clock_J00:  -> C1; gamma_C1*(hbt(sigma_C1, w_C1_O + w_C1_C3*C3 + w_C1_C4*C4 + w_C1_S1*DayNight) - C1);
+Clock_J01:  -> C2; gamma_C2*(hbt(sigma_C2, w_C2_O + w_C2_C1*C1 + w_C2_C4*C4 + w_C2_C2*C2) - C2);
+Clock_J02:  -> C3; gamma_C3*(hbt(sigma_C3, w_C3_O + w_C3_C4*C4 + w_C3_C2*C2 + w_C3_C1*C1 + w_C3_S1*DayNight) - C3);
+Clock_J03:  -> C4; gamma_C4*(hbt(sigma_C4, w_C4_O + w_C4_C1*C1 + w_C4_C4*C4) - C4);
+
+// Events:
+# Different Latitude
+# https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000075
+# https://www.researchgate.net/publication/225986947_Natural_Variation_in_Arabidopsis_thaliana
+# https://www.arabidopsis.org/portals/education/aboutarabidopsis.jsp
+# https://www.arabidopsis.org/images/geo_distribution.png
+# Boston
+#DayNight_16_8__E0: at (0.025 + 0.355*sin(floor(time/9.91)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) > 0, t0=false: DayNight = 1;
+#DayNight_16_8__E1: at (0.025 + 0.355*sin(floor(time/9.91)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) <= 0, t0=false: DayNight = 0;
+# Oslo
+#DayNight_16_8__E0: at (0.029 + 0.73*sin(floor(time/9.91)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) > 0, t0=false: DayNight = 1;
+#DayNight_16_8__E1: at (0.029 + 0.73*sin(floor(time/9.91)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) <= 0, t0=false: DayNight = 0;
+# Benghazi
+#DayNight_16_8__E0: at (0.022 + 0.265*sin(floor(time/9.91)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) > 0, t0=false: DayNight = 1;
+#DayNight_16_8__E1: at (0.022 + 0.265*sin(floor(time/9.91)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) <= 0, t0=false: DayNight = 0;
+# Paria, Cape Verde
+#DayNight_16_8__E0: at (0.0175 + 0.1125*sin(floor(time/9.91)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) > 0, t0=false: DayNight = 1;
+#DayNight_16_8__E1: at (0.0175 + 0.1125*sin(floor(time/9.91)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) <= 0, t0=false: DayNight = 0;
+# Variable
+DayNight_16_8__E0: at (coef_a + coef_b*sin(floor(time/9.5)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) > 0, t0=false: DayNight = 1;
+DayNight_16_8__E1: at (coef_a + coef_b*sin(floor(time/9.5)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) <= 0, t0=false: DayNight = 0;
+
+
+// Species initializations:
+C1 = 0.001;
+C2 = 0.001;
+C3 = 0.001;
+C4 = 0.001;
+
+// Variable initializations:
+avg = -1;
+t_shift = 0;
+period = 9.5;
+DayNight = 0;
+day = 1;
+night = 0;
+norm_avg = 0.0;
+coef_a=0.025
+coef_b=0.355
+
+gamma_C1 = 0.8749597615135173;
+sigma_C1 = 2.570827351266158;
+w_C1_O = 8.272426833238606;
+w_C1_C3 = -9.903752597790337;
+w_C1_C4 = -5.0505500651348685;
+w_C1_S1 = -1.1457009695200564;
+
+gamma_C2 = 9.78691703479351;
+sigma_C2 = 4.055778659247922;
+w_C2_O = 7.1207938257346495;
+w_C2_C1 = -9.677968597511873;
+w_C2_C2 = -5.077864872331377;
+w_C2_C4 = -0.7320487307047234;
+
+
+gamma_C3 = 0.21798848021786288;
+sigma_C3 = 6.057479999728538;
+w_C3_O = 1.579996360648618;
+w_C3_C1 = 4.465754032466092;
+w_C3_C2 = -9.877620902386205;
+w_C3_C4 = -1.564855498621586;
+w_C3_S1 = 1.5341524913998041;
+
+gamma_C4 = 3.736097088053459;
+sigma_C4 = 9.864307226135692;
+w_C4_O = 7.345848532198355;
+w_C4_C1 = -10.0;
+w_C4_C4 = -7.589766129141486;
+
+// Other declarations:
+var avg, t_shift, day, night, DayNight, coef_a, coef_b;
+const period, gamma_C1, sigma_C1;
+const w_C1_O, w_C1_C3, w_C1_S1, gamma_C2;
+const sigma_C2, w_C2_O, w_C2_C1, gamma_C3;
+const sigma_C3, w_C3_O, w_C3_C4;
+const w_C3_S1, gamma_C4, sigma_C4;
+const w_C4_O, w_C4_C1;

@@ -1,0 +1,39 @@
+
+
+J01:  -> E; gamma_E*(hbt(sigma_E, w_E_O + w_E_S1*DayNight) - E);
+J02:  -> F; gamma_F*(hbt(sigma_F, w_F_O + w_F_E*E) - F);
+J03:  -> RPS6p; gamma_RPS6*(hbt(sig_phos, w_phos + w_RPS6_F*F)*(1 - RPS6p) - hbt(sig_dephos, w_dephos + w_RPS6_C1*C1 + w_RPS6_C2*C2 + w_RPS6_C3*C3 + w_RPS6_C4*C4)*RPS6p);
+
+// Species initializations:
+E = 0.001;
+F = 0.001;
+RPS6p = 0.001;
+
+// Variable initializations:
+gamma_E = 3.558277395;
+sigma_E = 4.076017838;
+w_E_O = -0.699951505;
+w_E_S1 = 9.976409177;
+
+gamma_F = 3.318618295;
+sigma_F = 8.349043773;
+w_F_O = -0.838603397;
+w_F_E = 5.721142043;
+
+gamma_RPS6 = 1.723064662;
+sig_phos = 1.270006082;
+w_phos = -2.156172628;
+w_RPS6_F = 1.562415918;
+
+sig_dephos = 1.194229243;
+w_dephos = 6.432216089;
+#w_RPS6_C1 = -9.832184422;
+w_RPS6_C1 = -9.35;
+w_RPS6_C2 = 9.767340212;
+w_RPS6_C3 = 4.612489219;
+w_RPS6_C4 = 9.267898206;
+
+// Other declarations:
+const sigma_E, w_E_O, w_E_S1, gamma_F, sigma_F, w_F_O, w_F_E, gamma_RPS6;
+const gamma_E, sig_phos
+
