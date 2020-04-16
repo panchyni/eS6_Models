@@ -301,12 +301,21 @@ def PlotModelsOverTime_Long_Clock(base_model,shifts,parameter_dictionary):
             base_model.model['shift_hour'] = shift
             update_model_woReset(base_model,parameter_dictionary)
         shift_model_out = update_and_sim_model(base_model,shift_newpars)
+
+        # Set linestyle by shift
+        line_style = "-"
+        color_alpha = 1.0
+
+        if shift == 4.0:
+           line_style = "--"
+        if shift == -4.0:
+           color_alpha = 0.5
     
         # Plot Clock Components
-        plt.plot(correct_time(shift_model_out['time'][base_time_idxs_2day],24/9.5,-240), shift_model_out['C1'][base_time_idxs_2day], c='red',alpha=0.33,linewidth=2.5)
-        plt.plot(correct_time(shift_model_out['time'][base_time_idxs_2day],24/9.5,-240), shift_model_out['C2'][base_time_idxs_2day], c='blue',alpha=0.33,linewidth=2.5)
-        plt.plot(correct_time(shift_model_out['time'][base_time_idxs_2day],24/9.5,-240), shift_model_out['C3'][base_time_idxs_2day], c='orange',alpha=0.33,linewidth=2.5)
-        plt.plot(correct_time(shift_model_out['time'][base_time_idxs_2day],24/9.5,-240), shift_model_out['C4'][base_time_idxs_2day], c='green',alpha=0.33,linewidth=2.5)
+        plt.plot(correct_time(shift_model_out['time'][base_time_idxs_2day],24/9.5,-240), shift_model_out['C1'][base_time_idxs_2day], c='red',alpha=color_alpha,linestyle=line_style,linewidth=2.5)
+        plt.plot(correct_time(shift_model_out['time'][base_time_idxs_2day],24/9.5,-240), shift_model_out['C2'][base_time_idxs_2day], c='blue',alpha=color_alpha,linestyle=line_style,linewidth=2.5)
+        plt.plot(correct_time(shift_model_out['time'][base_time_idxs_2day],24/9.5,-240), shift_model_out['C3'][base_time_idxs_2day], c='orange',alpha=color_alpha,linestyle=line_style,linewidth=2.5)
+        plt.plot(correct_time(shift_model_out['time'][base_time_idxs_2day],24/9.5,-240), shift_model_out['C4'][base_time_idxs_2day], c='green',alpha=color_alpha,linestyle=line_style,linewidth=2.5)
         
         # Shift Color
         color_num = color_num - 1.0/len(shifts)
