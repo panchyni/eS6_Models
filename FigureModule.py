@@ -915,7 +915,23 @@ def normalize_expr(values):
         norm_values = [ 0.5 for v in values]
     return norm_values
 
-def PlotExpressionVectors_LD(selected_genes_file,all_genes_file,color,time_values):
+def PlotHistogram(select_file,all_file,bins,title):
+    '''
+       Plot histogram of the eS6 gene (select) data overlaid against all Dalchau gene (all) data
+    '''
+
+    Select_Data = [float(ln.strip()) for ln in open(select_file,"r").readlines() if not ln.strip()=="#N/A"]
+    All_Data = [float(ln.strip()) for ln in open(all_file,"r").readlines() if not ln.strip()=="#N/A"]
+
+    plt.hist(All_Data,color='grey', bins = bins, stacked=True,label="Background")
+    plt.hist(Select_Data,color='blue', bins = bins, stacked=True,label="eS6-like",alpha=0.5)
+
+    plt.xlabel(title)
+    plt.ylabel("Count")
+    plt.xticks(bins)
+    plt.legend()
+
+def PlotExpressionVectors(selected_genes_file,all_genes_file,time_values):
     '''
        Plot expression vector of selected genes against a background of all genes
     '''
@@ -935,7 +951,7 @@ def PlotExpressionVectors_LD(selected_genes_file,all_genes_file,color,time_value
         expr_values = [float(n) for n in ln.split("\t")[-1].split(",")]
         norm_expr = normalize_expr(expr_values)
         norm_expr_vectors.append(norm_expr)
-        plt.plot(time_values,norm_expr,c=color,alpha=0.1, linewidth=3)
+        plt.plot(time_values,norm_expr,c='blue',alpha=0.1, linewidth=3)
     
     # average across vectors in list
     avg_norm_vectors = []
@@ -961,82 +977,52 @@ def PlotExpressionVectors_LD(selected_genes_file,all_genes_file,color,time_value
     plt.plot(time_values,all_avg_norm_vectors,c='black', linewidth=3, linestyle=":")
     plt.xlabel("Time (hours)")
     plt.ylabel("Relative Expression")
-    plt.xticks([0,6,12,18,24,30,36,42])
+    plt.xticks(range(0,max(time_values),6))
     plt.axvspan(16,24,alpha=0.5,color='grey')
-    plt.axvspan(40,44,alpha=0.5,color='grey')
+    if max(time_values) > 64.0:
+        plt.axvspan(40,48,alpha=0.5,color='grey')
+        plt.axvspan(64,max(time_values),alpha=0.5,color='grey')
+    else:
+        plt.axvspan(40,min(48.0,max(time_values)),alpha=0.5,color='grey')
     plt.xlim(min(time_values),max(time_values))
 
-def PlotExpressionVectors_LL(data_file,genes_file,all_genes_file,color,time_values):
+def FilterLLData(data_file,genes_file,out_file):
     '''
-       Plot expression vector of selected genes against a background of all genes
+       Filter the constant light data set using a list of genes
     '''
 
-    # Read data file
-    data_lines = [ln.strip() for ln in open(data_file,"r").readlines()]
-
-    # Get genes
-    gene_lines = [ln.strip() for ln in open(genes_file,"r").readlines()]
-    genes = [ln.split("\t")[1] for ln in gene_lines[1:]]
-    all_gene_lines = [ln.strip() for ln in open(all_genes_file,"r").readlines()]
-    all_genes = [ln.split("\t")[1] for ln in all_gene_lines[1:]]
-
-    # Filter data file by genes
-    select_gene_expr = [ln for ln in data_lines if str.upper(ln.split("\t")[1]) in genes]
-    all_gene_expr = [ln for ln in data_lines if str.upper(ln.split("\t")[1]) in all_genes]
-
-    ### SELECT GENES ###
-    # Normalize and plot expression values
-    norm_expr_vectors = []
-    for ln in select_gene_expr[1:]:
-        expr_values = [float(n) for n in ln.split("\t")[-13:]]
-        norm_expr = normalize_expr(expr_values)
-        norm_expr_vectors.append(norm_expr)
-        plt.plot(time_values,norm_expr,c=color,alpha=0.1, linewidth=3)
+    genes = [ln.strip() for ln in open(genes_file,'r').readlines()]
+    lines = [ln for ln in open(data_file,'r').readlines() if str.upper(ln.split("\t")[1]) in genes]
     
-    # average across vectors in list
-    avg_norm_vectors = []
-    for i in range(len(norm_expr_vectors[0])):
-        average_value = float(sum([norm_expr_vectors[n][i] for n in range(len(norm_expr_vectors))]))/float(len(norm_expr_vectors))
-        avg_norm_vectors.append(average_value)
-    plt.plot(time_values,avg_norm_vectors,c='black', linewidth=3)
+    outlines = []
+    for ln in lines:
+        gene = ln.split("\t")[1]
+        expr_values = [n for n in ln.split("\t")[-13:]]
+        outlines.append(gene + "\t" + ",".join(expr_values))
 
-    ### ALL GENES ###
-    # Normal expression values
-    all_norm_expr_vectors = []
-    for ln in all_gene_expr[1:]:
-        expr_values = [float(n) for n in ln.split("\t")[-13:]]
-        norm_expr = normalize_expr(expr_values)
-        all_norm_expr_vectors.append(norm_expr)
-    
-    # average across vectors in list
-    all_avg_norm_vectors = []
-    for i in range(len(all_norm_expr_vectors[0])):
-        average_value = float(sum([all_norm_expr_vectors[n][i] for n in range(len(all_norm_expr_vectors))]))/float(len(all_norm_expr_vectors))
-        all_avg_norm_vectors.append(average_value)
-    
-    plt.plot(time_values,all_avg_norm_vectors,c='black', linewidth=3, linestyle=":")
-    plt.xlabel("Time (hours)")
-    plt.ylabel("Relative Expression")
-    plt.xticks([0,6,12,18,24,30,36,42])
-    plt.axvspan(16,24,alpha=0.5,color='grey')
-    plt.axvspan(40,44,alpha=0.5,color='grey')
-    plt.xlim(min(time_values),max(time_values))
+    output = open(out_file,'w')
+    output.write("".join(outlines))
+    output.close()
 
-def PlotPhaseDifferences(select_diff_file,all_diff_file,color):
+def FilterCCA1Data(data_file,genes_file,out_file):
     '''
-       Plot phase differences between selected all genes
+       Filter the CCA1-overexpression data set using a list of genes
     '''
 
-    PhaseDiff = [float(ln.strip()) for ln in open(select_diff_file,"r").readlines() if not ln.strip()=="#N/A"]
-    All_PhaseDiff = [float(ln.strip()) for ln in open(all_diff_file,"r").readlines() if not ln.strip()=="#N/A"]
+    genes = [ln.strip() for ln in open(genes_file,'r').readlines()]
+    lines = [ln for ln in open(data_file,'r').readlines() if str.upper(ln.split("\t")[1]) in genes]
 
-    plt.hist(All_PhaseDiff,color='grey', bins = [-24, -18, -12, -6, 0, 6, 12, 18, 24], stacked=True,label="Background")
-    plt.hist(PhaseDiff,color=color, bins = [-24, -18, -12, -6, 0, 6, 12, 18, 24], stacked=True,label="Day-to-Night",alpha=0.5)
+    outlines = []
+    for ln in lines:
+        gene = ln.split("\t")[1]
+        expr_values = [n for n in ln.split("\t")[2:14]]
+        expr_values = [expr_values[n] for n in [0,3,6,9,1,4,7,10,2,5,8,11]] # CCA1 values need to be reordered
+        outlines.append(gene + "\t" + ",".join(expr_values) + "\n")
 
-    plt.xlabel("Phase Difference (hours)")
-    plt.ylabel("Count")
-    plt.xticks([-24,-18,-12,-6,0,6,12,18,24])
-    plt.legend()
+    output = open(out_file,'w')
+    output.write("".join(outlines))
+    output.close()
+
 
 ### MAIN ####
 if __name__ == "__main__":
