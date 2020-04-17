@@ -31,8 +31,8 @@ Clock_J03:  -> C4; gamma_C4*(hbt(sigma_C4, w_C4_O + w_C4_C1*C1 + w_C4_C4*C4) - C
 #DayNight_16_8__E0: at (0.0175 + 0.1125*sin(floor(time/9.91)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) > 0, t0=false: DayNight = 1;
 #DayNight_16_8__E1: at (0.0175 + 0.1125*sin(floor(time/9.91)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) <= 0, t0=false: DayNight = 0;
 # Variable
-DayNight_16_8__E0: at (coef_a + coef_b*sin(floor(time/9.5)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) > 0, t0=false: DayNight = 1;
-DayNight_16_8__E1: at (coef_a + coef_b*sin(floor(time/9.5)*(2*pi/365) - 0.4375*pi) + sin(2*pi*time/period)) <= 0, t0=false: DayNight = 0;
+DayNight_16_8__E0: at (coef_a + coef_b*sin(floor(time/9.5)*(2*pi/365) - coef_c*pi) + sin(2*pi*time/period)) > 0, t0=false: DayNight = 1;
+DayNight_16_8__E1: at (coef_a + coef_b*sin(floor(time/9.5)*(2*pi/365) - coef_c*pi) + sin(2*pi*time/period)) <= 0, t0=false: DayNight = 0;
 
 
 // Species initializations:
@@ -51,6 +51,7 @@ night = 0;
 norm_avg = 0.0;
 coef_a=0.025
 coef_b=0.355
+coef_c=0.4375
 
 gamma_C1 = 0.8749597615135173;
 sigma_C1 = 2.570827351266158;

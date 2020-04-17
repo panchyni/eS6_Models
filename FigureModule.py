@@ -545,18 +545,25 @@ def PlotYearlyData(model,parameter_dict,location,time_start=0,time_stop=3467,tim
 
     # Update clock for Oslo
     if location == "Oslo":
-        model['coef_a'] = 0.08
-        model['coef_b'] = 0.775
+        model['coef_a'] = 0.11
+        model['coef_b'] = 0.76
+        model['coef_c'] = 0.437
+
     elif location == "Paria":
         model['coef_a'] = 0.1
-        model['coef_b'] = 0.125
+        model['coef_b'] = 0.12
+        model['coef_c'] = 0.437
+
     elif location == "Boston":
-        model['coef_a'] = 0.09
-        model['coef_b'] = 0.40
+        model['coef_a'] = 0.11
+        model['coef_b'] = 0.41
+        model['coef_c'] = 0.434
+
     else:
         print("Unrecognized Location: Defaulting to Boston. Known locations are Oslo, Paria, and Boston.")
-        model['coef_a'] = 0.09
-        model['coef_b'] = 0.40
+        model['coef_a'] = 0.11
+        model['coef_b'] = 0.41
+        model['coef_c'] = 0.434
 
     # Simulate
     model_out = model.simulate(time_start,time_stop,time_step,['time','DayNight','RPS6p','C1','C2','C3','C4'])
@@ -603,18 +610,25 @@ def PlotDailyData(model,parameter_dict,location,time_start=0,time_stop=3467,time
 
     # Update clock for Oslo
     if location == "Oslo":
-        model['coef_a'] = 0.08
-        model['coef_b'] = 0.775
+        model['coef_a'] = 0.11
+        model['coef_b'] = 0.76
+        model['coef_c'] = 0.437
+
     elif location == "Paria":
         model['coef_a'] = 0.1
-        model['coef_b'] = 0.125
+        model['coef_b'] = 0.12
+        model['coef_c'] = 0.437
+
     elif location == "Boston":
-        model['coef_a'] = 0.09
-        model['coef_b'] = 0.40
+        model['coef_a'] = 0.11
+        model['coef_b'] = 0.41
+        model['coef_c'] = 0.434
+
     else:
         print("Unrecognized Location: Defaulting to Boston. Known locations are Oslo, Paria, and Boston.")
-        model['coef_a'] = 0.09
-        model['coef_b'] = 0.40
+        model['coef_a'] = 0.11
+        model['coef_b'] = 0.41
+        model['coef_c'] = 0.434
 
     # Simulate
     model_out = model.simulate(time_start,time_stop,time_step,['time','DayNight','RPS6p','C1','C2','C3','C4'])
@@ -722,11 +736,13 @@ def PlotYearlyData_HF(model,base_model,parameter_dict,time_start=0,time_stop=346
     update_model(base_model,parameter_dict)
 
     # Update clock for Boston
-    model['coef_a'] = 0.09
-    model['coef_b'] = 0.40
+    model['coef_a'] = 0.11
+    model['coef_b'] = 0.41
+    model['coef_c'] = 0.434
 
-    base_model['coef_a'] = 0.09
-    base_model['coef_b'] = 0.40
+    base_model['coef_a'] = 0.11
+    base_model['coef_b'] = 0.41
+    base_model['coef_c'] = 0.434
 
     # Simulate
     model_out = model.simulate(time_start,time_stop,time_step,['time','DayNight','RPS6p','C1','C2','C3','C4'])
@@ -825,11 +841,13 @@ def PlotBinnedPeakMetric(model,base_model,parameter_dict,time_start=0,time_stop=
     update_model(base_model,parameter_dict)
 
     # Update clock for Boston
-    model['coef_a'] = 0.09
-    model['coef_b'] = 0.40
+    model['coef_a'] = 0.11
+    model['coef_b'] = 0.41
+    model['coef_c'] = 0.434
 
-    base_model['coef_a'] = 0.09
-    base_model['coef_b'] = 0.40
+    base_model['coef_a'] = 0.11
+    base_model['coef_b'] = 0.41
+    base_model['coef_c'] = 0.434
 
     # Simulate
     model_out = model.simulate(time_start,time_stop,time_step,['time','DayNight','RPS6p','C1','C2','C3','C4'])

@@ -13,7 +13,7 @@ Clock_J02:  -> C3; gamma_C3*(hbt(sigma_C3, w_C3_O + w_C3_C4*C4 + w_C3_C2*C2 + w_
 Clock_J03:  -> C4; gamma_C4*(hbt(sigma_C4, w_C4_O + w_C4_C1*C1 + w_C4_C4*C4) - C4);
 
 //DayNight
-DayNight := piecewise(1, coef_a + coef_b*(time - time_shift) + coef_c*(time - time_shift)^2 + coef_d*(time - time_shift)^3 > 10.0, 0)
+DayNight := piecewise(1, coef_a + coef_b*(time - time_shift) + coef_c*(time - time_shift)^2 + coef_d*(time - time_shift)^3 > 9.0, 0)
 
 // Events:
 _E0: at time > 9.697885 : coef_a = 0.0, coef_b = 0.0, coef_c = 0.0, coef_d = 0.0, time_shift = 9.697885;
